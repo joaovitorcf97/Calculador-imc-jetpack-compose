@@ -1,6 +1,7 @@
 package com.example.calculadoraimc
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -31,12 +32,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.calculadoraimc.calculo.CalcularImc
 import com.example.calculadoraimc.ui.theme.CalculadoraIMCTheme
 import com.example.calculadoraimc.ui.theme.DARK_BLUE
 import com.example.calculadoraimc.ui.theme.LIGHT_BLUE
@@ -56,6 +59,9 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculadoraIMC() {
+    val context = LocalContext.current
+    val calcularIMC = CalcularImc()
+
     var peso by remember {
         mutableStateOf("")
     }
@@ -65,7 +71,7 @@ fun CalculadoraIMC() {
     }
 
     var textoResultado by remember {
-        mutableStateOf("X")
+        mutableStateOf("")
     }
 
     Scaffold(topBar = {
@@ -138,7 +144,16 @@ fun CalculadoraIMC() {
 
             Button(
                 onClick = {
-
+                    if (peso.isEmpty() || altura.isEmpty()) {
+                        Toast.makeText(
+                            context,
+                            "Preencha todos os campos!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        calcularIMC.calcularImc(peso, altura)
+                        textoResultado = calcularIMC.resultadoIMC()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,9 +179,3 @@ fun CalculadoraIMC() {
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun AppPreview() {
-//    CalculadoraIMC()
-//}
